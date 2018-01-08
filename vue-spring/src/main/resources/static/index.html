@@ -1,22 +1,131 @@
+<!doctype html>
 <html>
 <head>
-    <title>Index page</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
 </head>
+
 <body>
-<div id="index">
-    <p>Hello world {{ name }}</p>
+<div id="app">
+
+    <div class="page-container">
+        <md-app>
+            <md-app-toolbar class="md-primary">
+                <span class="md-title">My Title</span>
+            </md-app-toolbar>
+
+            <md-app-drawer md-permanent="full">
+                <md-toolbar class="md-transparent" md-elevation="0">
+                    Navigation
+                </md-toolbar>
+
+                <md-list>
+                    <md-list-item>
+                        <md-icon>move_to_inbox</md-icon>
+                        <span class="md-list-item-text">Inbox</span>
+                    </md-list-item>
+
+                    <md-list-item>
+                        <md-icon>send</md-icon>
+                        <span class="md-list-item-text">Sent Mail</span>
+                    </md-list-item>
+
+                    <md-list-item>
+                        <md-icon>delete</md-icon>
+                        <span class="md-list-item-text">Trash</span>
+                    </md-list-item>
+
+                    <md-list-item>
+                        <md-icon>error</md-icon>
+                        <span class="md-list-item-text">Spam</span>
+                    </md-list-item>
+
+                    <md-list-item href="https://google.com" target="_blank">Link</md-list-item>
+
+                    <md-list-item to="/foo">Foo Router</md-list-item>
+                    <md-list-item to="/bar">Bar Router</md-list-item>
+                </md-list>
+            </md-app-drawer>
+
+            <md-app-content>
+                    <router-view></router-view>
+            </md-app-content>
+        </md-app>
+    </div>
+
 </div>
 
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<template id="foo">
+    <div>
+        <span class="md-title">Foo</span>
+        <md-table v-model="users">
+
+            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-cell md-label="ID" md-numeric>{{ item.id }}</md-table-cell>
+                <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
+            </md-table-row>
+
+            <md-table-empty-state
+                    md-label="No users found"
+                    :md-description="`No user found for this `">
+            </md-table-empty-state>
+        </md-table>
+    </div>
+</template>
+
+<template id="bar">
+    <div>bar</div>
+</template>
+
+<script src="https://unpkg.com/vue"></script>
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-
+<script src="https://unpkg.com/vue-material@beta"></script>
+<script src="js/jquery.min.js"></script>
 <script>
-    new Vue({
-        data: {
-            name: 'John'
-        }
-    }).$mount('#index')
-</script>
+    Vue.use(VueMaterial.default);
 
+    const Foo = Vue.component('foo', {
+        template: '#foo',
+        data: function () {
+            return {
+                users: []
+            }
+        },
+        created: function(){
+            this.updateUsers()
+        },
+        methods: {
+            updateUsers: function () {
+                $.get('/api/users')
+                    .then(response => {
+                        this.users = response;
+                    });
+            }
+        }
+    });
+    const Bar = Vue.component('bar', {
+        template: '#bar'
+    });
+
+    const routes = [
+        {path: '/foo', component: Foo},
+        {path: '/bar', component: Bar}
+    ];
+
+    const router = new VueRouter({
+        routes // short for `routes: routes`
+    });
+
+    new Vue({
+        name: "Normal",
+        router
+    }).$mount("#app");
+</script>
 </body>
 </html>
