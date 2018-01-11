@@ -98,7 +98,6 @@
 <script src="https://unpkg.com/vue"></script>
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 <script src="https://unpkg.com/vue-material@beta"></script>
-<script src="js/jquery.min.js"></script>
 <script>
     Vue.use(VueMaterial.default);
 
@@ -115,9 +114,12 @@
         methods: {
             updateUsers: function () {
                 var self = this;
-                $.get('/api/users')
+                fetch('/api/users')
                     .then(function (response) {
-                        self.users = response;
+                        return response.json();
+                    })
+                    .then(function (json) {
+                        self.users = json;
                     })
             }
         }
