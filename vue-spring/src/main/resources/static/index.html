@@ -54,7 +54,19 @@
             </md-app-drawer>
 
             <md-app-content>
-                    <router-view></router-view>
+                <md-card md-with-hover>
+                    <md-card-header>
+                        <div class="md-title">Card with hover effect</div>
+                    </md-card-header>
+
+                    <md-card-content>
+                        <router-view></router-view>
+                    </md-card-content>
+
+                    <md-card-actions>
+                        <md-button style="color: white;background-color: #4CAF50">Action</md-button>
+                    </md-card-actions>
+                </md-card>
             </md-app-content>
         </md-app>
     </div>
@@ -97,15 +109,16 @@
                 users: []
             }
         },
-        created: function(){
+        created: function () {
             this.updateUsers()
         },
         methods: {
             updateUsers: function () {
+                var self = this;
                 $.get('/api/users')
-                    .then(response => {
-                        this.users = response;
-                    });
+                    .then(function (response) {
+                        self.users = response;
+                    })
             }
         }
     });
